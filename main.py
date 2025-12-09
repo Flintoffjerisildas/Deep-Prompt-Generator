@@ -16,6 +16,7 @@ def main():
     parser = argparse.ArgumentParser(description="Generate a Deep Prompt from a brief.")
     parser.add_argument("--brief", type=str, help="The user brief for the task.")
     parser.add_argument("--file", type=str, help="Path to a file containing the brief.")
+    parser.add_argument("--format", type=str, choices=["xml", "markup"], help="Output format: 'xml' (Playbooks) or 'markup' (PromptML).")
     args = parser.parse_args()
 
     brief = ""
@@ -33,6 +34,19 @@ def main():
         print("Please provide a brief using --brief 'text' or --file 'path/to/file.txt'")
         return
 
+    # Determine Output Format
+    output_format = args.format
+    if not output_format:
+        print("\nWhich format would you like?")
+        print("1. XML (Playbooks) - Default")
+        print("2. Markup (PromptML)")
+        choice = input("Enter choice (1/2 or xml/markup): ").strip().lower()
+        if choice in ["2", "markup"]:
+            output_format = "markup"
+        else:
+            output_format = "xml"
+    
+    logger.info(f"Selected format: {output_format}")
     logger.info(f"Received brief: {brief[:50]}...")
 
     try:
@@ -57,12 +71,12 @@ def main():
 
         # Step 2: Prompt Design
         logger.info("Step 2: Designing Prompt...")
-        prompt_design = design_agent.design(intent_analysis)
+        prompt_design = design_agent.design(intent_analysis, output_format)
         logger.info("Prompt Design complete.")
 
         # Step 3: Prompt Creation
         logger.info("Step 3: Creating Final Prompt...")
-        final_prompt = creator_agent.create_prompt(prompt_design, brief)
+        final_prompt = creator_agent.create_prompt(prompt_design, brief, output_format)
         logger.info("Final Prompt created.")
 
         # Save Output

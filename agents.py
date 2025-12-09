@@ -50,75 +50,131 @@ class IntentAgent(Agent):
         return self.generate(system_prompt, brief)
 
 class DesignAgent(Agent):
-    def design(self, analysis):
-        logger.info("DesignAgent: Designing Playbook XML structure...")
-        system_prompt = """You are an expert Playbook Architect. 
-        Based on the intent analysis, design the hierarchical XML structure for the Playbook Prompt.
+    def design(self, analysis, output_format="xml"):
+        logger.info(f"DesignAgent: Designing structure for {output_format}...")
         
-        The structure MUST follow this hierarchy:
-        
-        <role>
-           (High level identity)
-        </role>
-        
-        <persona>
-           (Behavioral rules, tone, prohibited topics)
-        </persona>
-        
-        <requirements>
-           (Mandatory security/identity/scope rules)
-           (Include the Code Generation and Scala Spark rules if applicable)
-        </requirements>
-        
-        <global_directives>
-           (Interrupt handlers like "Speak to Human", "Language Change")
-        </global_directives>
-        
-        <taskflow>
-           <subtask name="...">
-              <step name="...">
-                 <action>...</action>
-              </step>
-              <handler name="...">...</handler>
-           </subtask>
-        </taskflow>
-        
-        <examples>
-           (One Happy Path, One Edge Case/Unhappy Path)
-           (If a coding task, the Happy Path example MUST show the Agent outputting a code block)
-        </examples>
+        if output_format == "markup":
+            system_prompt = """You are an expert PromptML Architect. 
+            Based on the intent analysis, design the structure for a PromptML (.pml) file.
+            
+            The structure MUST follow strict PromptML syntax:
+            
+            @prompt
+                @context (The Agent's Role/Identity) @end
+                
+                @objective (The Goal or main functionality) @end
+                
+                @instructions
+                    @step (Specific instructions/rules) @end
+                @end
+                
+                @examples
+                    @example
+                        @input ... @end
+                        @output ... @end
+                    @end
+                @end
+                
+                @constraints
+                    @tone ... @end
+                    (Include "Scala Spark" and "Code Block" rules here if applicable)
+                @end
+                
+                @metadata ... @end
+            @end
+            
+            Define the content for each section based on the analysis.
+            Output a blueprint for the .pml file.
+            """
+        else:
+            # Default to XML Playbooks
+            system_prompt = """You are an expert Playbook Architect. 
+            Based on the intent analysis, design the hierarchical XML structure for the Playbook Prompt.
+            
+            The structure MUST follow this hierarchy:
+            
+            <role>
+            (High level identity)
+            </role>
+            
+            <persona>
+            (Behavioral rules, tone, prohibited topics)
+            </persona>
+            
+            <requirements>
+            (Mandatory security/identity/scope rules)
+            (Include the Code Generation and Scala Spark rules if applicable)
+            </requirements>
+            
+            <global_directives>
+            (Interrupt handlers like "Speak to Human", "Language Change")
+            </global_directives>
+            
+            <taskflow>
+            <subtask name="...">
+                <step name="...">
+                    <action>...</action>
+                </step>
+                <handler name="...">...</handler>
+            </subtask>
+            </taskflow>
+            
+            <examples>
+            (One Happy Path, One Edge Case/Unhappy Path)
+            (If a coding task, the Happy Path example MUST show the Agent outputting a code block)
+            </examples>
 
-        Define the specific content for each section based on the analysis.
-        For <taskflow>, identify the specific Subtasks, Steps, and Actions.
-        Ensure you use 'Hub-and-Spoke' thinking: if the brief implies multiple distinct skills, define how this agent relates to them (or if it IS the specific specialist).
-        
-        Output a detailed blueprint."""
+            Define the specific content for each section based on the analysis.
+            Output a detailed blueprint."""
+            
         return self.generate(system_prompt, analysis)
 
 class CreatorAgent(Agent):
-    def create_prompt(self, design, original_brief):
-        logger.info("CreatorAgent: Generating final Playbook Prompt XML...")
-        system_prompt = """You are a Master Playbooks Prompt Writer.
-        Your task is to generate the final, production-ready system prompt using the provided design and brief.
+    def create_prompt(self, design, original_brief, output_format="xml"):
+        logger.info(f"CreatorAgent: Generating final prompt for {output_format}...")
         
-        STRICT RULES FROM THE GUIDE:
-        1. Hierarchy: Use the XML tags: <role>, <persona>, <requirements>, <global_directives>, <taskflow>, <examples>.
-        2. Naming: 
-           - XML attributes: lowercase in quotes (e.g., name="subtask name").
-           - Tools: snake_case (e.g., `get_account_balance`).
-           - States: SCREAMING_SNAKE_CASE.
-        3. Formatting:
-           - Use **bold** for key concepts/variables (e.g., **'$customerName'**).
-           - Use UPPERCASE for mandatory terms (MUST, ALWAYS, NEVER).
-        4. Taskflow Logic:
-           - Use 'Invoke tool...' for tool calls.
-           - Use IF...THEN...ELSE logic for branching.
-           - Use <handler> for subtask-specific edge cases.
-        5. Examples:
-           - clearly label 'Agent:' and 'User:'.
-           - Show tool calls as: [Tool: tool_name: 'outcome'].
+        if output_format == "markup":
+            system_prompt = """You are a Master PromptML Writer.
+            Your task is to generate the final, production-ready PromptML code using the provided design and brief.
+            
+            STRICT SYNTAX RULES (PromptML):
+            1. All sections start with @section_name and end with @end.
+            2. Main sections: @prompt, @context, @objective, @instructions, @examples, @constraints, @metadata.
+            3. Instruction steps: @step [instruction text] @end.
+            4. Examples: @example -> @input ... @end -> @output ... @end.
+            5. Constraints: @length, @tone, @difficulty.
+            6. Comments use #.
+            
+            CRITICAL CONTENT RULES:
+            - If the task is technical, ensure "Scala Spark" is enforced in @constraints or @instructions.
+            - If code is required, ensure instructions explicitly ask for a Markdown Code Block.
+            
+            Generate the COMPLETE .pml code.
+            """
+        else:
+            # Default to XML Playbooks
+            system_prompt = """You are a Master Playbooks Prompt Writer.
+            Your task is to generate the final, production-ready system prompt using the provided design and brief.
+            
+            STRICT RULES FROM THE GUIDE:
+            1. Hierarchy: Use the XML tags: <role>, <persona>, <requirements>, <global_directives>, <taskflow>, <examples>.
+            2. Naming: 
+            - XML attributes: lowercase in quotes (e.g., name="subtask name").
+            - Tools: snake_case (e.g., `get_account_balance`).
+            - States: SCREAMING_SNAKE_CASE.
+            3. Formatting:
+            - Use **bold** for key concepts/variables (e.g., **'$customerName'**).
+            - Use UPPERCASE for mandatory terms (MUST, ALWAYS, NEVER).
+            4. Taskflow Logic:
+            - Use 'Invoke tool...' for tool calls.
+            - Use IF...THEN...ELSE logic for branching.
+            - Use <handler> for subtask-specific edge cases.
+            5. Examples:
+            - clearly label 'Agent:' and 'User:'.
+            - Show tool calls as: [Tool: tool_name: 'outcome'].
 
-        Generate the COMPLETE prompt in Markdown/XML.
-        """
+            Generate the COMPLETE prompt in Markdown/XML.
+            """
+            
         user_input = f"Original Brief: {original_brief}\n\nPrompt Design Blueprint:\n{design}"
         return self.generate(system_prompt, user_input)
