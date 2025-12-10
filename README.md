@@ -1,21 +1,50 @@
 # Deep Agent Prompt Generator
 
-A multi-agent AI system designed to transform a simple user brief into a high-quality, "deep" prompt optimized for Large Language Models (LLMs). This project uses three specialized agents (Intent Analyst, Prompt Designer, and Prompt Creator) powered by the Groq API to ensure the final output is precise, structured, and effective—specifically tailored for Scala coding tasks but adaptable for others.
+The **Deep Agent Prompt Generator** is a sophisticated, multi-agent cognitive pipeline designed to solve the "blank page problem" in AI interactions. By orchestrating three specialized agents—the **Intent Agent** (Strategist), **Design Agent** (Architect), and **Creator Agent** (Writer)—the system transforms a sparse, ambiguous user brief into a rigorous, production-grade system prompt. Unlike standard prompting, which often leads to hallucinations or "lazy" responses, the Deep Agent employs a unique **"Logic Injection" mechanism** that enforces critical technical constraints (such as mandatory Scala Spark syntax or strict Code Block formatting) at the architectural level. Supporting both **XML "Playbooks"** and **Prompt Markup Language (PML)**, it delivers deterministic, high-fidelity artifacts suitable for deploying robust enterprise AI agents.
 
 ## Features
 
-- **Three-Agent Pipeline**:
-  - **Intent Agent**: Analyzes the user's brief to understand core objectives and implicit requirements.
-  - **Design Agent**: Structures the perfect prompt blueprint based on the intent analysis.
-  - **Creator Agent**: Synthesizes the final "Deep Prompt" using best practices and detailed examples.
-- **Groq API Integration**: Leverages high-speed inference for rapid generation.
-- **Markdown Output**: Automatically saves the generated prompt to a `.md` file for easy sharing and usage.
-- **Logging**: Comprehensive logging for debugging and tracking the generation process.
+- **Multi-Format Architecture**:
+  - **XML Playbooks**: Strict hierarchical structure (`<taskflow>`, `<requirements>`) for complex logic.
+  - **Prompt Markup Language (PML)**: Modern annotation-based syntax (`@prompt`, `@steps`) for streamlined definition.
+- **Three-Agent Cognitive Pipeline**:
+  - **Intent Agent**: Logic Injection & Contextualization.
+  - **Design Agent**: Structural Blueprinting & Hub-and-Spoke mapping.
+  - **Creator Agent**: Syntax Enforcement & Defensive Prompting.
+- **Intelligent Logic Guardrails**:
+  - Automatically enforces **Scala Spark** for technical tasks if no language is specified.
+  - Mandates **Executable Code Blocks** to prevent descriptive-only responses.
+- **Groq API Integration**: High-speed inference for real-time generation.
+- **Interactive CLI**: Auto-detects preferences or guides users via interactive prompts.
 
-## Requirements
+## Technical Requirements & Specifications
 
-- Python 3.8+
-- [Groq API Keys](https://console.groq.com/) (You need 3 keys, or you can reuse one key 3 times)
+### System Fundamentals
+- **Runtime**: Python 3.8 or higher.
+- **LLM Engine**: [Groq API](https://console.groq.com/) (Llama 3 70B Versatile recommended).
+  - *Configuration*: Requires 3 environment variables (`agent-1-api-key`, etc.) to simulate distinct cognitive entities.
+
+### Supported Prompt Standards
+The generator is engineered to comply with two rigorous prompt specifications:
+1.  **Playbooks (XML)**:
+    - **Structure**: Hierarchical `<role>`, `<taskflow>`, `<requirements>`.
+    - **Philosophy**: Hub-and-Spoke architecture for complex, stateful agents.
+2.  **Prompt Markup Language (PML)**:
+    - **Structure**: Annotation-based `@prompt`, `@context`, `@steps`.
+    - **Philosophy**: Streamlined, code-like definition for modern LLM frameworks.
+
+## System Intelligence ("The Intel")
+
+The "Deep" in Deep Agent comes from its hidden cognitive layers. It doesn't just format text; it applies **Strategic Intelligence**:
+
+### 1. Intent Analysis (The Brain)
+- **Role Extraction**: Identifies if the agent is a "Helpful Assistant" or a "Strict Auditor".
+- **Implicit Requirement Detection**: Scans for unspoken needs (e.g., "If it's an ETL task, it implies robust error handling").
+
+### 2. Logic Injection (The Guardrails)
+The system imposes "Invisible Constraints" to guarantee enterprise-grade quality:
+- **The "Scala Spark" Law**: Any technical brief regarding data/pipelines that lacks a specific language is *automatically* forced to use Scala Spark.
+- **The "Code Block" Mandate**: The Creator Agent is forbidden from writing descriptive code; it must output executable verification scripts.
 
 ## Setup
 
